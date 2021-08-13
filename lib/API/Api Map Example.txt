@@ -1,0 +1,59 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Map mapResponse;
+  List listResponse;
+
+  Future getData() async {
+    var myFuture = await http.get(Uri.parse(
+        'https://api.first.org/data/v1/teams?country=br&pretty=true'));
+    debugPrint(myFuture.body);
+
+    setState(() {
+      mapResponse = jsonDecode(myFuture.body);
+      listResponse = mapResponse['data'];
+      //debugPrint('mapResponse');
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Material App',
+      home: Scaffold(
+          appBar: AppBar(
+            title: Text('Material App Bar'),
+          ),
+          body: ListView.builder(
+            itemCount: listResponse.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Text(listResponse[1]["team"].toString() +
+                  "\n" +
+                  "Address: " +
+                  listResponse[1]["address"].toString());
+            },
+          )
+          //Container(
+          //   child: Text(listResponse[1]['address']),
+          // ),
+          ),
+    );
+  }
+}

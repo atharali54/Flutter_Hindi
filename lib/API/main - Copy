@@ -1,0 +1,59 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/Services.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter_models/model.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Models modelData;
+  Future getData() async {
+    // String jsonString = await rootBundle.loadString("assets/5.json");
+    // // var jsonResponse = json.decode(jsonString);
+    // // Models data = Models.fromJson(jsonResponse);
+    // setState(() {
+    //   modelData = modelsFromJson(jsonString);
+    //   // debugPrint('${modelData.classes[0]}');
+    //   debugPrint('${modelData[0].className}, ${modelData[0].level}');
+    // });
+
+    //Using Http-------------------------------------------
+    var response = await http
+        .get(Uri.parse('https://www.metaweather.com/api/location/28743736/'));
+    var jsonResponse = json.decode(response.body);
+    Models data = Models.fromJson(jsonResponse);
+    setState(() {
+      //modelData = modelsFromJson(response.body);
+      modelData = data;
+      debugPrint(modelData.consolidatedWeather[0].weatherStateName);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Material App',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Material App Bar'),
+        ),
+        body: Center(
+          child: Container(),
+        ),
+      ),
+    );
+  }
+}
